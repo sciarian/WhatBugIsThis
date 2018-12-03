@@ -8,8 +8,15 @@
 
 import UIKit
 
-class MainMenuViewController: UIViewController {
-
+class MainMenuViewController: UIViewController, BugCatcherDelegate{
+    
+    func getEntries(entries: [Catch]) {
+        print("\nAdding entries\n")
+        self.entries += entries
+        print("Total number of entries in main view controller...\(String(describing: self.entries.count))")
+    }
+    
+    
     //LABELS
     @IBOutlet weak var usernameLabel:      UILabel!
     @IBOutlet weak var weatherLabel:       UILabel!
@@ -24,6 +31,7 @@ class MainMenuViewController: UIViewController {
     
     //HELPER VAR
     var tempUsername: String?
+    var entries:[Catch] = []
 
     
     override func viewDidLoad() {
@@ -61,14 +69,25 @@ class MainMenuViewController: UIViewController {
         super.viewWillDisappear(animated)
     }
     
-    /*
-    // MARK: - Navigation
+    
+    //SEGUE
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    //If we are going to the bug catch table view then send them our entries.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "catchListSegue" {
+            if let dest = segue.destination as? BugCatchTableViewController {
+                    print("\nSending entries to the main view controller\n")
+                    dest.entries += self.entries
+                }
+            }
+        
+        
+        if segue.identifier == "segueToBugCatcher" {
+            if let dest = segue.destination as? BugCatcherViewController {
+                dest.delegate = self
+            }
+        }
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
-    */
-
 }

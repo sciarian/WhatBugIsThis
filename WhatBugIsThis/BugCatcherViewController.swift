@@ -8,6 +8,11 @@
 
 import UIKit
 
+//PROTOCOL
+protocol BugCatcherDelegate {
+    func getEntries(entries: [Catch])
+}
+
 class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     //BUTTON
@@ -25,10 +30,31 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
     //ENTRIES FOR LIST
     var entries:[Catch] = []
     
+    //DELEGATE
+    var delegate: MainMenuViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        //DESELECT KEYBOARD WHEN TOUCHING OUTSIDE IT
+        let detectTouch = UITapGestureRecognizer(target:self, action: #selector(self.dismissKeyboard))
+        self.view.addGestureRecognizer(detectTouch)
+
+    }
+
+    @objc func dismissKeyboard(){
+        self.view.endEditing(true)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        print("Entered view will disappear")
+        //super.viewWillDisappear(true)
+        if let d = self.delegate{
+            print("\nAdding entries to main view controller\n")
+            d.getEntries(entries: self.entries)
+        }else{
+            print("delegate is fucked mate")
+        }
     }
     
 //BUTTON ACTION FUNCTIONS
@@ -43,7 +69,9 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
  
     //Add most recent picture to the collection
     @IBAction func pressedSaveCatch(_ sender: UIButton) {
+        print("\nSaved Entrie\n")
         entries.append(Catch(image: self.lastPic.image!, date: Date(), description: self.catchDescriptionField.text!))
+        print("Total number of entries \(self.entries.count)")
     }
     
     @IBAction func pressedCameraButton(_ sender: UIButton) {

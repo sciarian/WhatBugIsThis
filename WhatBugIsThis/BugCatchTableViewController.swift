@@ -8,8 +8,13 @@
 
 import UIKit
 
-class BugCatchTableViewController: UITableViewController {
+//Protocal so main menu can grab what ever entries were made
 
+class BugCatchTableViewController: UITableViewController {
+    
+    //List of bugs we have caught
+    var entries:[Catch] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -24,12 +29,22 @@ class BugCatchTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+            return self.entries.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
+        var bugCatch = self.entries[indexPath.row]
+            cell.textLabel?.text       = bugCatch.description
+            cell.detailTextLabel?.text = "\(bugCatch.date?.timeIntervalSince1970)"
+            cell.imageView?.image      = bugCatch.image
+        
+        return cell
     }
 
     /*

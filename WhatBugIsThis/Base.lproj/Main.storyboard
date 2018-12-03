@@ -135,7 +135,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Go Catching" id="QKn-cj-M17">
                             <connections>
-                                <segue destination="Vbj-yr-DBA" kind="show" id="WuN-ce-Kym"/>
+                                <segue destination="Vbj-yr-DBA" kind="show" identifier="segueToBugCatcher" id="WuN-ce-Kym"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -197,7 +197,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Eh6-sE-5wT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1204" y="427"/>
+            <point key="canvasLocation" x="-1204" y="426.83658170914543"/>
         </scene>
         <!--Bug Catcher View Controller-->
         <scene sceneID="UWd-7a-oKv">
@@ -223,7 +223,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6op-iY-v7U">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="fog" translatesAutoresizingMaskIntoConstraints="NO" id="6op-iY-v7U">
                                 <rect key="frame" x="16" y="186" width="343" height="322"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -278,5 +278,6 @@
     </scenes>
     <resources>
         <image name="clear-day" width="64" height="64"/>
+        <image name="fog" width="64" height="64"/>
     </resources>
 </document>
