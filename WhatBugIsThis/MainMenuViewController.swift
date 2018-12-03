@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import Firebase
 
 class MainMenuViewController: UIViewController, BugCatcherDelegate{
+    
+    fileprivate var ref: DatabaseReference?
     
     func getEntries(entries: [Catch]) {
         print("\nAdding entries\n")
@@ -42,7 +45,40 @@ class MainMenuViewController: UIViewController, BugCatcherDelegate{
         
         //DONE: Get todays weather conditions
         getWeather()
+        
+        //UPDATE FIREBASE DATABASE
+        //self.ref = Database.database().reference()
+        //self.registerForFireBaseUpdates()
     }
+    
+    fileprivate func registerForFireBaseUpdates()
+    {
+        self.ref!.child("history").observe(.value, with: { snapshot in
+            if let postDict = snapshot.value as? [String : AnyObject] {
+                var tmpItems = [Catch]()
+                for (_,val) in postDict.enumerated() {
+                    let entry       = val.1 as! Dictionary<String,AnyObject>
+                    let pic         = entry["pic"] as! UIImageView?
+                    let timestamp   = entry["timestamp"] as! String?
+                    let description = entry["description"] as! String?
+                    tmpItems.append(Catch(pic: pic?.image, timestamp: timestamp!.description, description: description!))
+                }
+                self.entries = tmpItems
+            }
+        })
+    }
+   
+/*
+    //FIREBASE DICTIONAIRY IMPLEMENTATION
+    func toDictionary(vals: Catch) -> NSDictionary {
+        return [
+            "timestamp"   : NSString(string:  vals.timestamp!),
+            "pic"    : UIImageView(image: vals.pic) ,
+            "description" : NSString(string:  vals.description!),
+        ]
+    }
+ */
+ 
     
     //Helper function to get weather.
     func getWeather(){
@@ -50,6 +86,7 @@ class MainMenuViewController: UIViewController, BugCatcherDelegate{
             if let w = weather {
                 DispatchQueue.main.async {
                     // DONE: Bind the weather object attributes to the view here
+                    print("Weather report icon name: \(w.iconName)")
                     self.weatherIcon.image = UIImage(named: w.iconName)
                     self.temperatureLabel.text = "\(w.temperature.rounded())º"
                     self.weatherReportLabel.text = w.summary

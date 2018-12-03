@@ -39,10 +39,10 @@ class BugCatchTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
-        var bugCatch = self.entries[indexPath.row]
+        let bugCatch = self.entries[indexPath.row]
             cell.textLabel?.text       = bugCatch.description
-            cell.detailTextLabel?.text = "\(bugCatch.date?.timeIntervalSince1970)"
-            cell.imageView?.image      = bugCatch.image
+            cell.detailTextLabel?.text = bugCatch.timestamp
+            cell.imageView?.image      = bugCatch.pic
         
         return cell
     }

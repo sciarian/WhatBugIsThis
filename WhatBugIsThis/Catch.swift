@@ -10,14 +10,14 @@ import Foundation
 import UIKit
 
 struct Catch{
-    var image: UIImage?
-    var date:Date?
-    var description:String?
+    var pic:         UIImage?
+    var timestamp:   String?
+    var description: String?
     
-    init(image:UIImage,date:Date,description:String){
-        self.image       = image
-        self.date        = date
-        self.description = description
+    init(pic:UIImage?,timestamp:String,description:String){
+        self.pic              = pic
+        self.timestamp        = timestamp
+        self.description      = description
     }
 }
 

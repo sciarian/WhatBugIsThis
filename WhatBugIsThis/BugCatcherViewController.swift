@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 //PROTOCOL
 protocol BugCatcherDelegate {
@@ -33,14 +34,40 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
     //DELEGATE
     var delegate: MainMenuViewController?
     
+    //FIREBASE
+    fileprivate var ref : DatabaseReference?
+
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         //DESELECT KEYBOARD WHEN TOUCHING OUTSIDE IT
         let detectTouch = UITapGestureRecognizer(target:self, action: #selector(self.dismissKeyboard))
         self.view.addGestureRecognizer(detectTouch)
 
+        //SET UP FIRE BASE REFERENCE
+        self.ref = Database.database().reference()
+        //self.registerForFireBaseUpdates()             //Commented out to we do not double update the database
     }
+    
+/*
+    fileprivate func registerForFireBaseUpdates()
+    {
+        self.ref!.child("history").observe(.value, with: { snapshot in
+            if let postDict = snapshot.value as? [String : AnyObject] {
+                var tmpItems = [Catch]()
+                for (_,val) in postDict.enumerated() {
+                    let entry       = val.1 as! Dictionary<String,AnyObject>
+                    let pic         = entry["pic"] as! UIImage?
+                    let timestamp   = entry["timestamp"] as! String?
+                    let description = entry["description"] as! String?
+                    tmpItems.append(Catch(pic: pic, timestamp: timestamp!.description, description: description!))
+                }
+                self.entries = tmpItems
+            }
+        })
+    }
+*/
 
     @objc func dismissKeyboard(){
         self.view.endEditing(true)
@@ -53,7 +80,7 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
             print("\nAdding entries to main view controller\n")
             d.getEntries(entries: self.entries)
         }else{
-            print("delegate is fucked mate")
+            print("delegate nil")
         }
     }
     
@@ -69,10 +96,41 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
  
     //Add most recent picture to the collection
     @IBAction func pressedSaveCatch(_ sender: UIButton) {
+        
+        //SAVE HISTORY TO FIRBASE
+        
+        //Print program
+        print("\npicture description: \(self.lastPic.description)\n")
+        print("\nDate: \(Date().description)\n")
+        print("\n\(self.catchDescriptionField.text!)\n")
+        
+        /*
+        //MAKE A CATCH STRUCT WITH THE CURRENT BUG PICTURE, TIMESTAMP, AND DESCRIPTION
+        
+        let entry = Catch(pic: self.lastPic.image, timestamp: Date().description, description: self.catchDescriptionField.text!)
+        let newChild = self.ref?.child("history").childByAutoId()
+        
+        //SEND CATCH STRUCT TO HELPER FUNCTION TO CONVERT IT TO A DICTIONARY
+        newChild?.setValue(self.toDictionary(c: entry))
+        */
+ 
+        //OLD METHOD WITH ARRAY. NON PERSISTANT DATA
         print("\nSaved Entrie\n")
-        entries.append(Catch(image: self.lastPic.image!, date: Date(), description: self.catchDescriptionField.text!))
+        entries.append(Catch(pic: self.lastPic.image!, timestamp: Date().description, description: self.catchDescriptionField.text!))
         print("Total number of entries \(self.entries.count)")
     }
+    
+    /*
+    //FIREBASE DICTIONAIRY IMPLEMENTATION
+    func toDictionary(c: Catch) -> NSDictionary {
+        //HERE WE TAKE THE CATCH STRUCT AND CONVERT IT A DICTIONARY SO WE CAN SEND IT TO THE DATABASE AS A JSON OBJECT
+        return [
+            "timestamp"   : NSString(string:   c.timestamp!),
+            "pic"         : NSString(UIImagePNGRepresentation(c.pic!)?.base64EncodedData(options: Data.Base64EncodingOptions)),
+            "description" : NSString(string:   c.description!),
+        ]
+    }
+     */
     
     @IBAction func pressedCameraButton(_ sender: UIButton) {
         let picker = UIImagePickerController()
