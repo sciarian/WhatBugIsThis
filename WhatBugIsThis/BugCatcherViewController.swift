@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-//import FirebaseStorage
+import FirebaseStorage
 
 //PROTOCOL
 protocol BugCatcherDelegate {

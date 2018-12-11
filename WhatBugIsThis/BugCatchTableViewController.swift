@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 
 //Protocal so main menu can grab what ever entries were made
 
@@ -47,8 +48,8 @@ class BugCatchTableViewController: UITableViewController {
             cell.detailTextLabel?.text = bugCatch.timestamp
         
         //Convert url to image reference
-        var thePic:UIImage?
-        let picReference = self.refSTR?.reference(forURL: bugCatch.picURLStr!)
+        //var thePic:UIImage?
+        //let picReference = self.refSTR?.reference(forURL: bugCatch.picURLStr!)
         
         /**
         //Use reference to get the image
@@ -63,7 +64,7 @@ class BugCatchTableViewController: UITableViewController {
         **/
         
         
-        cell.imageView?.image      = thePic
+        cell.imageView?.image = UIImage(named: "praying_mantis")
         
         return cell
     }

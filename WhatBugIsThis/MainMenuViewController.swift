@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 
 class MainMenuViewController: UIViewController, BugCatcherDelegate{
     
@@ -30,6 +31,9 @@ class MainMenuViewController: UIViewController, BugCatcherDelegate{
     //IMAGES
     @IBOutlet weak var weatherIcon: UIImageView!
     
+    
+    @IBOutlet weak var logo: UIImageView!
+    
     //DARK WEATHER API INSTANCE
     let wAPI = DarkSkyWeatherService.getInstance()
     
@@ -42,6 +46,13 @@ class MainMenuViewController: UIViewController, BugCatcherDelegate{
         super.viewDidLoad()
         //DONE: Update catcher name:
         self.usernameLabel.text = self.tempUsername
+        
+        if let usename = usernameLabel.text{
+            self.usernameLabel.text = usename
+        }else{
+            self.usernameLabel.text = "Admin"
+        }
+        
         print("\nUsername label text: \(self.usernameLabel.text!)\n")
         
         //DONE: Get todays weather conditions
@@ -50,7 +61,9 @@ class MainMenuViewController: UIViewController, BugCatcherDelegate{
         //UPDATE FIREBASE DATABASE
         self.refDB = Database.database().reference()
         self.refSTR = Storage.storage()
-        //self.registerForFireBaseUpdates()
+        self.registerForFireBaseUpdates()
+        
+        logo.image = UIImage(named:"Logo")
     }
     
     fileprivate func registerForFireBaseUpdates()

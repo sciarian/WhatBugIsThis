@@ -28,6 +28,7 @@ class LoginViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        logo.image = UIImage(named: "Logo")
 
         // Do any additional setup after loading the view.
     }
