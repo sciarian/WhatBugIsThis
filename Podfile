@@ -8,7 +8,7 @@ target 'WhatBugIsThis' do
   # Pods for WhatBugIsThis
   pod 'Firebase/Database'
   pod 'Firebase/Core'
-
+  pod 'Firebase/Storage'
 
   target 'WhatBugIsThisTests' do
     inherit! :search_paths

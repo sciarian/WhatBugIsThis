@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+//import FirebaseStorage
 
 //PROTOCOL
 protocol BugCatcherDelegate {
@@ -35,8 +36,8 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
     var delegate: MainMenuViewController?
     
     //FIREBASE
-    fileprivate var ref : DatabaseReference?
-
+    fileprivate var refDB  : DatabaseReference?     //Reference to firebase database
+    fileprivate var refSTR : Storage?      //Reference to firebase file storage
     
     
     override func viewDidLoad() {
@@ -46,8 +47,17 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
         self.view.addGestureRecognizer(detectTouch)
 
         //SET UP FIRE BASE REFERENCE
-        self.ref = Database.database().reference()
+        self.refDB  = Database.database().reference()
+        self.refSTR = Storage.storage()
+        //self.refSTR = Storage.storage()
+        
+        //SET UP FIREBASE FILE STORAGE REFERENCE
+        
         //self.registerForFireBaseUpdates()             //Commented out to we do not double update the database
+        
+       // print("\n\nImage Description: \(String(describing: self.lastPic.image?))\n\n")
+        //print("\n\nImage Description: \(String(describing: self.lastPic.image?.description))\n\n")
+        
     }
     
 /*
@@ -86,6 +96,8 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
     
 //BUTTON ACTION FUNCTIONS
 /*
+     
+     //DISPLAY PHOTOLIB
     @IBAction func pressedBugCollectionButton(_ sender: UIButton) {
         let picker = UIImagePickerController()
         picker.delegate = self
@@ -103,34 +115,65 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
         print("\npicture description: \(self.lastPic.description)\n")
         print("\nDate: \(Date().description)\n")
         print("\n\(self.catchDescriptionField.text!)\n")
+        var timeStamp:String = Date().description   //Get time stamp
         
-        /*
+        
+        //FIREBASE STORAGE (Referenced firebase API)
+        /**
+        //Make image ref to download the image
+        var imageRefStr:String = "images\(timeStamp).jpg"
+        var imageRef = self.refSTR?.reference().child(imageRefStr)
+        var data = UIImageJPEGRepresentation(self.lastPic.image!, 1.0)
+        
+        //Upload the image data
+        let uploadTask = imageRef!.putData(data!, metadata: nil) { (metadata, error) in
+            guard let metadata = metadata else {
+                // Uh-oh, an error occurred!
+                return
+            }
+        }
+        
+        //var downloadURL:URL = nil
+        
+        var picURL:URL?
+        imageRef!.downloadURL { (url, error) in
+            guard let downloadURL = url else {
+                // Uh-oh, an error occurred!
+                return
+            }
+            picURL = downloadURL
+       }
+        
         //MAKE A CATCH STRUCT WITH THE CURRENT BUG PICTURE, TIMESTAMP, AND DESCRIPTION
-        
-        let entry = Catch(pic: self.lastPic.image, timestamp: Date().description, description: self.catchDescriptionField.text!)
-        let newChild = self.ref?.child("history").childByAutoId()
-        
-        //SEND CATCH STRUCT TO HELPER FUNCTION TO CONVERT IT TO A DICTIONARY
-        newChild?.setValue(self.toDictionary(c: entry))
-        */
+        var urlString:String = ""
+        do{
+            let urlstr = try String(contentsOf: picURL!)
+            urlString = urlstr
+        }catch{
+            print("Error converting catch entry to list")
+        }
+ */
+        let entry = Catch(picURLStr: "", timestamp: Date().description, description:self.catchDescriptionField.text!)
+        let newChild = self.refDB?.child("history").childByAutoId()
+         //SEND CATCH STRUCT TO HELPER FUNCTION TO CONVERT IT TO A DICTIONARY
+         newChild?.setValue(self.toDictionary(c: entry))
  
         //OLD METHOD WITH ARRAY. NON PERSISTANT DATA
-        print("\nSaved Entrie\n")
-        entries.append(Catch(pic: self.lastPic.image!, timestamp: Date().description, description: self.catchDescriptionField.text!))
-        print("Total number of entries \(self.entries.count)")
+        //print("\nSaved Entrie\n")
+        //entries.append(Catch(picRef: downloadURL, timestamp: timeStamp, description: self.catchDescriptionField.text!))
+        //print("Total number of entries \(self.entries.count)")
     }
     
-    /*
+    
     //FIREBASE DICTIONAIRY IMPLEMENTATION
     func toDictionary(c: Catch) -> NSDictionary {
         //HERE WE TAKE THE CATCH STRUCT AND CONVERT IT A DICTIONARY SO WE CAN SEND IT TO THE DATABASE AS A JSON OBJECT
-        return [
-            "timestamp"   : NSString(string:   c.timestamp!),
-            "pic"         : NSString(UIImagePNGRepresentation(c.pic!)?.base64EncodedData(options: Data.Base64EncodingOptions)),
-            "description" : NSString(string:   c.description!),
-        ]
+            return [
+                "timestamp"   : NSString(string: c.timestamp!),
+                "picURL"      : NSString(string: c.picURLStr!),
+                "description" : NSString(string: c.description!),
+            ]
     }
-     */
     
     @IBAction func pressedCameraButton(_ sender: UIButton) {
         let picker = UIImagePickerController()
@@ -147,12 +190,10 @@ class BugCatcherViewController: UIViewController, UIImagePickerControllerDelegat
     
     /*
     // MARK: - Navigation
-
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
     */
-
 }

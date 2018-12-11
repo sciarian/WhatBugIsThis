@@ -11,7 +11,8 @@ import Firebase
 
 class MainMenuViewController: UIViewController, BugCatcherDelegate{
     
-    fileprivate var ref: DatabaseReference?
+    fileprivate var refDB: DatabaseReference?
+    fileprivate var refSTR: Storage?
     
     func getEntries(entries: [Catch]) {
         print("\nAdding entries\n")
@@ -47,21 +48,45 @@ class MainMenuViewController: UIViewController, BugCatcherDelegate{
         getWeather()
         
         //UPDATE FIREBASE DATABASE
-        //self.ref = Database.database().reference()
+        self.refDB = Database.database().reference()
+        self.refSTR = Storage.storage()
         //self.registerForFireBaseUpdates()
     }
     
     fileprivate func registerForFireBaseUpdates()
     {
-        self.ref!.child("history").observe(.value, with: { snapshot in
+        self.refDB!.child("history").observe(.value, with: { snapshot in
             if let postDict = snapshot.value as? [String : AnyObject] {
                 var tmpItems = [Catch]()
                 for (_,val) in postDict.enumerated() {
                     let entry       = val.1 as! Dictionary<String,AnyObject>
-                    let pic         = entry["pic"] as! UIImageView?
-                    let timestamp   = entry["timestamp"] as! String?
+                    let picURL      = entry["picURL"]      as! String?
+                    let timestamp   = entry["timestamp"]   as! String?
                     let description = entry["description"] as! String?
-                    tmpItems.append(Catch(pic: pic?.image, timestamp: timestamp!.description, description: description!))
+                    
+                    //DOWNLOAD IMAGE FROM FIRBASE STORAGE WITH URL FROM FIREBASE DB
+                    
+                    //convert url string -> URL
+                    //let picURL = URL(string: picURLStr!)
+                    //create reference to pic with pic URL
+                    //let picReference = self.refSTR?.reference(forURL: picURL!)
+                    //dowload image with pic reference
+                    
+ 
+                    //USED TO DOWNLOAD IMAGE FROM FIREBASE STORAGE, MOVED TO BugCatchTableViewController
+/*
+                    // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+                     var thePic:UIImage?
+                     picReference?.getData(maxSize: 1 * 1024 * 1024) { data, error in
+                        if error != nil {
+                            // Uh-oh, an error occurred!
+                        } else {
+                            // Data for "images/island.jpg" is returned
+                            thePic = UIImage(data: data!)
+                        }
+                    }
+*/
+                    tmpItems.append(Catch(picURLStr: picURL, timestamp: timestamp!.description, description: description!))
                 }
                 self.entries = tmpItems
             }

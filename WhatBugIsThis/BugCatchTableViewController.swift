@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 //Protocal so main menu can grab what ever entries were made
 
@@ -15,9 +16,11 @@ class BugCatchTableViewController: UITableViewController {
     //List of bugs we have caught
     var entries:[Catch] = []
     
+    fileprivate var refSTR: Storage?
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.refSTR = Storage.storage()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -42,7 +45,25 @@ class BugCatchTableViewController: UITableViewController {
         let bugCatch = self.entries[indexPath.row]
             cell.textLabel?.text       = bugCatch.description
             cell.detailTextLabel?.text = bugCatch.timestamp
-            cell.imageView?.image      = bugCatch.pic
+        
+        //Convert url to image reference
+        var thePic:UIImage?
+        let picReference = self.refSTR?.reference(forURL: bugCatch.picURLStr!)
+        
+        /**
+        //Use reference to get the image
+        picReference?.getData(maxSize: 1 * 1024 * 1024) { data, error in
+            if error != nil {
+                // Uh-oh, an error occurred!
+            } else {
+                // Data for "images/island.jpg" is returned
+                thePic = UIImage(data: data!)
+            }
+            }
+        **/
+        
+        
+        cell.imageView?.image      = thePic
         
         return cell
     }
